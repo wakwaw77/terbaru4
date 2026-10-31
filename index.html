@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Vid</title>
+
+  <!-- POPUNDER -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{--bg:#ffffff;--text:#0f172a;--muted:#64748b;--line:#e2e8f0;--btn:#111827;--btnText:#ffffff;--btnHover:#000;--card:#f8fafc}
+    *,*::before,*::after{box-sizing:border-box}
+    html{-webkit-text-size-adjust:100%}
+    html,body{height:100%;margin:0}
+    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;color:var(--text);background:var(--bg);line-height:1.45;overflow-x:hidden}
+    img,video,canvas,svg,iframe{max-width:100%;height:auto;display:block}
+.appbar{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.85);backdrop-filter:saturate(180%) blur(8px);border-bottom:1px solid var(--line)}
+.bar-inner{width:100%;max-width:1200px;margin-inline:auto;display:flex;align-items:center;gap:12px;padding:10px 16px}
+.brand{display:flex;align-items:center;gap:8px;font-weight:800;letter-spacing:.2px}
+.logo{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:6px;background:#111827;color:#fff;font-size:14px}
+.spacer{flex:1}
+.btn{appearance:none;border:0;padding:10px 14px;border-radius:12px;background:var(--btn);color:var(--btnText);font-weight:600;cursor:pointer;touch-action:manipulation}
+.btn:hover{background:var(--btnHover)}
+.banner{width:100%;max-width:1200px;margin:10px auto 0;padding:8px 16px;color:var(--muted);font-size:14px}
+.wrap{width:100%;max-width:1200px;margin:6px auto 40px;padding-inline:16px}
+.player-shell{display:grid;place-items:center;margin-top:20px}
+.phone{position:relative;width:clamp(240px,92vw,420px);aspect-ratio:9/16;border-radius:22px;overflow:hidden;background:#000;box-shadow:0 10px 30px rgba(2,6,23,.15),0 3px 10px rgba(2,6,23,.08)}
+.phone video,.phone img{width:100%;height:100%;object-fit:cover}
+.meta{width:100%;max-width:760px;margin:12px auto 0;padding:0 6px;text-align:center;color:var(--muted);font-size:13px}
+
+.ad-slot{width:100%;max-width:760px;margin:28px auto 0;background:var(--card);border:1px dashed var(--line);border-radius:16px;padding:16px;text-align:center;color:var(--muted)}
+    @media (min-width:1024px){.wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,480px) minmax(0,1fr);align-items:start}.player-shell{grid-column:2}}
+    html,body{width:100%!important;max-width:100%!important}
+    html,body,.wrap,.container,.page,.section,#__next,main{min-width:0!important}
+
+    /* ===== POPUP UMUR ===== */
+.popup-overlay{position:fixed;inset:0;z-index:99999;display:grid;place-items:center;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);opacity:0;visibility:hidden;transition:opacity.2s ease}
+.popup-overlay.show{opacity:1;visibility:visible}
+.popup-card{width:min(360px,92vw);background:#fff;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.35);padding:22px 20px 18px;transform:scale(.95);transition:transform.2s ease}
+.popup-overlay.show.popup-card{transform:scale(1)}
+.popup-card h3{margin:0 0 8px;font:700 22px/1.2 Inter,system-ui,sans-serif;color:#111827}
+.popup-card p{margin:0 0 20px;font:15px/1.5 Inter,system-ui,sans-serif;color:#4b5563}
+.popup-actions{display:flex;gap:12px}
+.popup-btn{flex:1;height:48px;border:0;border-radius:12px;cursor:pointer;font:700 16px Inter,system-ui,sans-serif;letter-spacing:.3px}
+.popup-btn.batal{background:#e5e7eb;color:#111827}
+.popup-btn.lanjut{background:#ef4444;color:#fff}
+.popup-btn.download{background:#16a34a;color:#fff}
+.popup-btn:active{transform:translateY(1px)}
+  </style>
+</head>
+
+<body>
+  <header class="appbar">
+    <div class="bar-inner">
+      <div class="brand" aria-label="brand">
+        <span class="logo" aria-hidden>V</span>
+        <span>vldey<span style="color:#3b82f6">.co</span></span>
+      </div>
+      <div class="spacer"></div>
+      <button class="btn">Upload</button>
+    </div>
+  </header>
+
+  <div class="banner">Advertise</div>
+
+  <main class="wrap">
+    <section class="player-shell">
+      <div class="phone">
+        <video id="video" playsinline muted autoplay controls poster="">
+          Browser kamu tidak mendukung pemutar video HTML5.
+        </video>
+      </div>
+      <div class="meta" id="duration">0:00 / 0:00</div>
+    </section>
+  </main>
+
+  <div id="popup-umur" class="popup-overlay">
+    <div class="popup-card">
+      <h3>KONFIRMASI CONTENT</h3>
+      <p>Apakah Anda Tertarik Dengan Content Tersebut Dan Ingin Melanjutkan?</p>
+      <div class="popup-actions">
+        <button class="popup-btn batal" id="umurBatal">BATAL</button>
+        <button class="popup-btn lanjut" id="umurLanjut">LANJUT</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="popup-download" class="popup-overlay">
+    <div class="popup-card">
+      <h3>🔥 Lihat Video Lainnya</h3>
+      <p>Terbaru Dan Menarik. Klik LANJUT!</p>
+      <div class="popup-actions">
+        <button class="popup-btn batal" id="downloadBatal">NANTI</button>
+        <button class="popup-btn download" id="downloadBtn">LANJUT NONTON</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ====== MAIN CONTENT======
+    const videos = [
+      "https://i.imgur.com/dlr79NX.mp4", 
+      "https://i.imgur.com/JMLylr7.mp4", 
+      "https://i.imgur.com/6SBBEke.mp4", 
+      "https://i.imgur.com/izYwuMP.mp4", 
+      "https://i.imgur.com/nTtVlM8.mp4"  
+    ];
+
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    let playlist = shuffleArray([...videos]);
+    let currentIndex = 0;
+    let harusAutoPlay = true; // UBAH: default true biar langsung jalan
+    const v = document.getElementById('video');
+    const meta = document.getElementById('duration');
+    var LINK_IKLAN = "https://s.shopee.co.id/6fiBU2A2Q0";
+
+    function playVideo() {
+      v.src = playlist[currentIndex];
+      v.muted = true; // WAJIB muted biar bisa autoplay di HP
+      v.load();
+      let p = v.play();
+      if(p !== undefined){
+        p.catch(()=>{});
+      }
+    }
+
+    function fmt(t){const m=Math.floor(t/60);const s=Math.floor(t%60).toString().padStart(2,'0');return `${m}:${s}`;}
+
+    v.addEventListener('loadedmetadata',()=>{meta.textContent=`0:00 / ${fmt(v.duration)}`;});
+    v.addEventListener('timeupdate',()=>{meta.textContent=`${fmt(v.currentTime)} / ${fmt(v.duration)}`;});
+
+    // pas user klik play, baru buka iklan
+    let sudahBukaIklan = false;
+    v.addEventListener('play', function() {
+      if(!sudahBukaIklan){
+        sudahBukaIklan = true;
+        setTimeout(function(){
+          window.open(LINK_IKLAN, '_blank');
+        }, 300);
+      }
+    });
+
+    // pas video selesai
+    v.addEventListener('ended', function() {
+      currentIndex++;
+      if(currentIndex >= playlist.length){
+        playlist = shuffleArray([...videos]);
+        currentIndex = 0;
+      }
+      sudahBukaIklan = false;
+      harusAutoPlay = true; // UBAH: abis selesai tetep autoplay
+      playVideo();
+    });
+
+    playVideo();
+    // ====== SELESAI BAGIAN VIDEO ======
+
+    // ===== SCRIPT 2 POPUP =====
+    (function () {
+      var overlayUmur = document.getElementById('popup-umur');
+      var btnUmurLanjut = document.getElementById('umurLanjut');
+      var btnUmurBatal = document.getElementById('umurBatal');
+      var popupUmurShown = false;
+
+      var overlayDownload = document.getElementById('popup-download');
+      var btnDownload = document.getElementById('downloadBtn');
+      var btnDownloadBatal = document.getElementById('downloadBatal');
+      var popupDownloadShown = false;
+
+      setTimeout(function(){
+        if(!popupUmurShown){
+          overlayUmur.classList.add('show');
+          document.documentElement.style.overflow = 'hidden';
+          popupUmurShown = true;
+        }
+      }, 30000);
+
+      setTimeout(function(){
+        if(!popupDownloadShown){
+          overlayDownload.classList.add('show');
+          document.documentElement.style.overflow = 'hidden';
+          popupDownloadShown = true;
+        }
+      }, 60000);
+
+      function closePopup(overlay){
+        overlay.classList.remove('show');
+        document.documentElement.style.overflow = '';
+      }
+
+      // POPUP 1: Tetep buka iklan
+      btnUmurLanjut.onclick = function(){
+        window.open(LINK_IKLAN, '_blank');
+        closePopup(overlayUmur);
+      };
+      btnUmurBatal.onclick = function(){
+        window.open(LINK_IKLAN, '_blank');
+        closePopup(overlayUmur);
+      };
+
+      // POPUP 2: LANJUT = video berikutnya langsung PLAY
+      btnDownload.onclick = function(){
+        closePopup(overlayDownload);
+        currentIndex++;
+        if(currentIndex >= playlist.length){
+          playlist = shuffleArray([...videos]);
+          currentIndex = 0;
+        }
+        sudahBukaIklan = false;
+        harusAutoPlay = true;
+        playVideo();
+      };
+
+      // POPUP 2: TUTUP = balik ke video 1 LANGSUNG PLAY
+      btnDownloadBatal.onclick = function(){
+        closePopup(overlayDownload);
+        currentIndex = 0;
+        playlist = shuffleArray([...videos]);
+        playlist[0] = videos[0];
+        sudahBukaIklan = false;
+        harusAutoPlay = true;
+        playVideo();
+      };
+    })();
+  </script>
+</body>
+  </html>
